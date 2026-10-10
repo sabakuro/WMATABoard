@@ -1,7 +1,33 @@
 #include <Arduino.h>
+#include <WiFi.h>
 #include <display.h>
 
+#include <exception>
+#include <string>
+
+#include "api/WmataClient.h"
+#include "config/config.h"
+#include "config/secrets.h"
+ 
 Display *display = nullptr;
+ 
+wmata::WmataClient client(secrets::WMATA_API_KEY);
+wmata::StationInfo station; // Store latest successful fetch
+ 
+static const int MAX_ROWS = 3; // Most amount of rows to display on LED Board
+ 
+// Fetches fresh data. On failure the previous data stays on screen.
+void refreshTrains()
+{
+  try
+  {
+    station = client.fetchStation(config::STATION_CODE, config::STATION_NAME);
+  }
+  catch (const std::exception &e)
+  {
+    Serial.printf("Fetch failed: %s\n", e.what());
+  }
+}
 
 void setup()
 {
