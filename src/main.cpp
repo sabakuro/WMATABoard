@@ -8,14 +8,15 @@
 #include "api/WmataClient.h"
 #include "config/config.h"
 #include "config/secrets.h"
- 
+#include "models/train.h"
+
 Display *display = nullptr;
- 
+
 wmata::WmataClient client(secrets::WMATA_API_KEY);
 wmata::StationInfo station; // Store latest successful fetch
- 
+
 static const int MAX_ROWS = 3; // Most amount of rows to display on LED Board
- 
+
 // Fetches fresh data. On failure the previous data stays on screen.
 void refreshTrains()
 {
@@ -33,6 +34,7 @@ void setup()
 {
   Serial.begin(115200);
   delay(1000);
+  Serial.printf("setup called");
 
   HUB75_I2S_CFG::i2s_pins pins = {
       25, 27, 26,     // R1, G1, B1
@@ -54,17 +56,33 @@ void setup()
 
   display = new Display(panel);
   display->init();
+
+  WiFi.begin(secrets::WIFI_NAME, secrets::WIFI_PASSWORD);
+
+  Serial.print("Connecting");
+
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("\nWiFi connected!");
 }
 
 void loop()
 {
   if (display != nullptr)
   {
+    refreshTrains();
     display->printHeader();
-    display->printRow(1, "Ashburn", "BRD");
-    display->printRow(2, "Vienna", "6");
-    display->printRow(3, "Ashburn", "9");
+
+    for (int i = 0; i < MAX_ROWS; i++)
+    {
+      wmata::Train train = station.trains[i];
+      display->printRow(i + 1, train.destination, train.minutesRaw.c_str());
+    }
   }
 
-  delay(30);
+  delay(config::REFRESH_SECONDS * 1000);
 }
