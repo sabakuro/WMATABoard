@@ -42,3 +42,8 @@ void Display::rightAlign(std::string s, int y)
     panel.getTextBounds(s.c_str(), 0, 0, &x1, &y1, &w, &h);
     panel.setCursor(boardWidth - w, y);
 }
+
+void Display::clear()
+{
+    panel.clearScreen();
+}

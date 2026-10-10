@@ -9,6 +9,7 @@ public:
     void init();
     void printHeader();
     void printRow(int line, std::string dest, std::string time);
+    void clear();
 
 private:
     MatrixPanel_I2S_DMA &panel;

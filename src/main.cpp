@@ -34,7 +34,6 @@ void setup()
 {
   Serial.begin(115200);
   delay(1000);
-  Serial.printf("setup called");
 
   HUB75_I2S_CFG::i2s_pins pins = {
       25, 27, 26,     // R1, G1, B1
@@ -59,7 +58,7 @@ void setup()
 
   WiFi.begin(secrets::WIFI_NAME, secrets::WIFI_PASSWORD);
 
-  Serial.print("Connecting");
+  Serial.println("Connecting");
 
   while (WiFi.status() != WL_CONNECTED)
   {
@@ -67,7 +66,7 @@ void setup()
     Serial.print(".");
   }
 
-  Serial.println("\nWiFi connected!");
+  Serial.println("WiFi connected!");
 }
 
 void loop()
@@ -75,8 +74,9 @@ void loop()
   if (display != nullptr)
   {
     refreshTrains();
-    display->printHeader();
 
+    display->clear();
+    display->printHeader();
     for (int i = 0; i < MAX_ROWS; i++)
     {
       wmata::Train train = station.trains[i];

@@ -16,7 +16,7 @@ namespace wmata
     // #region PRIVATE Methods declared in api/WmataClient.h
     std::string WmataClient::httpGet(const std::string &path) const
     {
-        Serial.printf("httpGet called");
+        Serial.println("httpGet called");
         WiFiClientSecure client;
         client.setInsecure(); // Skips certificate validation; pin WMATA's root CA for production use.
 
