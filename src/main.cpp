@@ -77,9 +77,12 @@ void loop()
 
     display->clear();
     display->printHeader();
-    for (int i = 0; i < MAX_ROWS; i++)
+    const std::vector<wmata::Train> &trains = station.trains;
+    const int rows = trains.size() < MAX_ROWS ? trains.size() : MAX_ROWS;
+
+    for (int i = 0; i < rows; i++)
     {
-      wmata::Train train = station.trains[i];
+      const wmata::Train &train = station.trains[i];
       display->printRow(i + 1, train.destination, train.minutesRaw.c_str());
     }
   }
